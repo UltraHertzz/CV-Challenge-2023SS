@@ -1,14 +1,36 @@
-function y = imreader(dir,TUMDataSet)
-%IMREADER 读取图片数据(.csv)并另存为.mat格式(load RGBD data(*.csv) and saving as (*.mat) format)
-%   此处显示详细说明
-    if TUMDataSet
-        baseDownloadURL = 'https://vision.in.tum.de/rgbd/dataset/freiburg3/rgbd_dataset_freiburg3_long_office_household.tgz';
-        dataFolder = fullfile(tempdir,'tum_rgbt_dataset',filesep);
-        options = weboptions('Timeout',inf);
-        tgzFileName = [dataFolder,'fr3_office.tgz'];
-        folderExists = exist(dataFolder,dir);
+function image = imreader(dir,extension)
+% IMREADER 
+%   读取图片数据并另存为.mat格式(load RGBD data and saving as (*.mat) format)
+%   输入I  ：图片文件所在地址
+%   输入II ：图片扩展名
+    
+    % Define the folder containing the images 
+    imageFolder = 'dir';
 
-        y = 1;
+    % Get a list of all image files in the folder
+    imageFiles = dir(fullfile(imageFolder,'*.%s', extension));
+
+    % load image file recursively
+    for i = 1:numel(imageFiles)
+        % Read the image
+        imagePath = fullfile(imageFolder, imageFiles(i).name);
+        image = imread(imagePath);
+
+        % Perform image processing or feature detection if needed
+
+        % Store 3D point and RGB value data in a structure
+        pointCloudData = struct();
+        pointCloudData.Points = [];
+        pointCloudData.RGB = [];
+
+        % Save the point cloud data to a .mat file
+        [~, imageName, ~] = fileparts(imagePath);
+        savePath = fullfile(imageFolder,[imageName, '.mat']);
+        save(savePath, 'pointCloudData');
+
+        % Display progress
+        fprintf('Processed image %d of %d: %s\n', i ,numel(imageFiles), imageFiles(i).name);
     end
+   
 end
 
