@@ -1,33 +1,26 @@
 classdef Camera
     %Camera class
-    %   此处显示详细说明
+    %   相机类，通过Cam1 = Camera(camInfo) 构造
+    %   返回相机宽    Cam1.WIDTH
+    %   相机高        Cam1.HEIGHT, 
+    %   相机内参矩阵  Cam1.IntrinMat
     properties
-        CAMERA_ID
-        MODEL
-        WIDTH
+        WIDTH      
         HEIGHT
-        PARAMS
+        IntrinMat
     end
     %% 
     methods
-        function obj = Camera(CAMERA_ID,MODEL,WIDTH,HEIGHT,varargin)
-            %IMREADERCLASS 构造此类的实例
-            %   此处显示详细说明
-            obj.CAMERA_ID = CAMERA_ID;
-            obj.MODEL = MODEL;
-            obj.WIDTH = WIDTH;
-            obj.HEIGHT = HEIGHT;
-            obj.PARAMS = varargin;
+        function obj = Camera(camInfo)
+            % IMREADERCLASS 构造此类的实例
+            %   此处显示详细说
+            obj.WIDTH = camInfo(1);
+            obj.HEIGHT = camInfo(2);
+            obj.IntrinMat = [camInfo(3),          0, camInfo(5);
+                                      0, camInfo(4), camInfo(6);
+                                      0,          0,          1];
         end
         
-        function camIntrincMat = intrix(~)
-            % Camera Intrinsic Matrix
-            %   获取相机内参 (get camera intrinsic matrix)
-            if obj.MODEL == "PINHOLE"
-                f_x,f_y,c_x,c_y = varargin;
-                camIntrincMat = [f_x,0,c_x;0,f_y,c_y;0,0,1];
-            end
-        end
     end
 end
 
