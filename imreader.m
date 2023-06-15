@@ -1,14 +1,23 @@
-function y = imreader(dir,TUMDataSet)
-%IMREADER 读取图片数据(.csv)并另存为.mat格式(load RGBD data(*.csv) and saving as (*.mat) format)
-%   此处显示详细说明
-    if TUMDataSet
-        baseDownloadURL = 'https://vision.in.tum.de/rgbd/dataset/freiburg3/rgbd_dataset_freiburg3_long_office_household.tgz';
-        dataFolder = fullfile(tempdir,'tum_rgbt_dataset',filesep);
-        options = weboptions('Timeout',inf);
-        tgzFileName = [dataFolder,'fr3_office.tgz'];
-        folderExists = exist(dataFolder,dir);
+function imageDataList = imreader(direc)
+% IMREADER 数据为像素坐标
+%   读取图片数据( pixel cordinate &RGB-Value H*W*C)，返回字典imageDataList
+%   输入I  ：图片文件所在地址 path of the pictures,
+%           字典对应i-th图片imageDataList{i}内存有像素+rgb-channel
+    
+    imageFiles = dir(fullfile(direc,'*.JPG'));
+    
+    % Init array to store image data
+    imageDataList = {};
 
-        y = 1;
+    % load image file recursively
+    for i = 1:numel(imageFiles)
+        % Read the image
+        imagePath = fullfile(direc, imageFiles(i).name);
+        image = imread(imagePath);
+
+        % Append the image data to the list
+        imageDataList{i} = image;
     end
+   
 end
 
