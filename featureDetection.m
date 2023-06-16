@@ -20,8 +20,8 @@ function [matchedPoints1,matchedPoints2] = featureDetection(image1,image2)
     matchedPoints1 = valid_points1(indexPairs(:,1),:);
     matchedPoints2 = valid_points2(indexPairs(:,2),:);
 
-    %% Visualization
-    figure;
-    showMatchedFeatures(I1,I2,matchedPoints1,matchedPoints2);
+%     %% Visualization
+%     figure;
+%     showMatchedFeatures(I1,I2,matchedPoints1,matchedPoints2);
 end
 
