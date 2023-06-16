@@ -1,5 +1,5 @@
 function [ cp_cell ] = makehat(mat_3xN)
-% MAKEHAT generates a cell array whjich contains all the corss product
+% MAKEHAT generates a cell array which contains all the cross product
 % matrices from an 3xN input matrix
     cp_cell = cell(1, size(mat_3xN,2));
     for i = 1:size(mat_3xN,2)
