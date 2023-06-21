@@ -1,8 +1,12 @@
 # CV-Challenge-2023SS
 TUM Computer Vision Challenge Repo for Matlab 3D reconstruction 2023SS
 ## Usage
-## Pipeline
+3D-Reconstruction from sets of images using Matlab
+## Outline
+1. Feature Detection using SIFT
+2. incremental Reconstruction with PnP feature matching
 ## define
-## Harris_detector (Feuture Punkte)
+dataset:       ETH3D
+camera model:  PINHOLE
+matlab lib:    OpenCV
 
-函数输入:image 灰度图矩阵 返回：feature矩阵：[x1,x2.....;y1,y2....]  
