@@ -158,7 +158,7 @@ I = undistortImage(images{1}, intrinsics);
 % features around the edges of the image.
 border = 50;
 roi = [border, border, size(I, 2)- 2*border, size(I, 1)- 2*border];
-prevPoints   = detectSURFFeatures(I, NumOctaves=8, ROI=roi);
+prevPoints   = detectSURFFeatures(I, MetricThreshold=400,NumOctaves=8, ROI=roi);
 
 % Extract features. Using 'Upright' features improves matching, as long as
 % the camera motion involves little or no in-plane rotation.
@@ -178,7 +178,7 @@ for i = 2:numel(images)
     I = undistortImage(images{i}, intrinsics);
     
     % Detect, extract and match features.
-    currPoints   = detectSURFFeatures(I, NumOctaves=8, ROI=roi);
+    currPoints   = detectSURFFeatures(I,MetricThreshold=1000, NumOctaves=8, ROI=roi);
     currFeatures = extractFeatures(I, currPoints, Upright=true);    
     indexPairs   = matchFeatures(prevFeatures, currFeatures, ...
         MaxRatio=0.7, Unique=true);
@@ -221,7 +221,7 @@ for i = 2:numel(images)
     % Refine the 3-D world points and camera poses.
     [xyzPoints, camPoses, reprojectionErrors] = bundleAdjustment(xyzPoints, ...
         tracks, camPoses, intrinsics, FixedViewId=1, ...
-        PointsUndistorted=true);
+        PointsUndistorted=true,MaxIterations=2000, RelativeTolerance= 1e-7, AbsoluteTolerance= 1e-22);
 
     % Store the refined camera poses.
     vSet = updateView(vSet, camPoses);
@@ -514,13 +514,17 @@ choice = questdlg('Would you like to read the camera parameters from a file or i
     'Choose Method', ...
     'Read from file', 'Input manually', 'Cancel', 'Cancel');
 
-switch choice
-    case 'Read from file'
-        % Let the user select the .txt file
-        direction = uigetfile('*.txt', 'Select the cameras.txt file');
-        
-        if direction ~= 0  % if a file is selected
-            camInfo = cameraReader(direction);
+    switch choice
+        case 'Read from file'
+            % Let the user select the .txt file
+            [filename, path] = uigetfile('*.txt', 'Select the cameras.txt file');
+            
+            % When the user cancels file selection, filename will be '0'
+            if isequal(filename, '0')
+                disp('User cancelled file selection.');
+            else
+                direction = fullfile(path, filename);  % Concatenate the full path of the file
+                camInfo = cameraReader(direction);
             
             % Set the camera parameters to the edit boxes
             set(handles.edit5, 'String', num2str(camInfo(1)));
@@ -539,7 +543,7 @@ switch choice
             Skew = 0;
             cameraIntrinsicsObj = cameraIntrinsics(FocalLength, PrincipalPoint, ImageSize, 'RadialDistortion', RadialDistortion, 'TangentialDistortion', TangentialDistortion, 'Skew', Skew);
             save('cameraIntrinsics.mat', 'cameraIntrinsicsObj');  
-        end
+            end
 
 case 'Input manually'
     prompt = {'Enter the width:', 'Enter the height:', 'Enter fx:', 'Enter fy:', 'Enter cx:', 'Enter cy:'};
@@ -570,4 +574,4 @@ case 'Input manually'
         cameraIntrinsicsObj = cameraIntrinsics(FocalLength, PrincipalPoint, ImageSize, 'RadialDistortion', RadialDistortion, 'TangentialDistortion', TangentialDistortion, 'Skew', Skew);
         save('cameraIntrinsics.mat', 'cameraIntrinsicsObj');  
     end
-end
+    end
